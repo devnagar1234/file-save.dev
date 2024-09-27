@@ -57,12 +57,19 @@
         button:hover {
             background-color: #218838;
         }
+        #fileInput {
+            display: none;
+        }
     </style>
 </head>
 <body>
 
     <div id="dropArea">Drag & Drop your image file here</div>
     
+    <!-- Upload Button for Gallery -->
+    <button id="uploadBtn">Upload Image</button>
+    <input type="file" id="fileInput" accept="image/*">
+
     <div class="imageContainer">
         <img id="uploadedImage" src="" alt="Uploaded Image">
         <button id="editTextBtn">Edit Text Below</button>
@@ -83,6 +90,8 @@
         const uploadedImage = document.getElementById('uploadedImage');
         const imageText = document.getElementById('imageText');
         const saveTextBtn = document.getElementById('saveTextBtn');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInput = document.getElementById('fileInput');
 
         // Load persisted image and text from localStorage on page load
         window.onload = () => {
@@ -116,12 +125,21 @@
             e.preventDefault();
             dropArea.classList.remove('dragover');
             dropArea.textContent = 'File uploaded!';
-            handleFileDrop(e);
+            handleFileUpload(e.dataTransfer.files[0]);
         });
 
-        function handleFileDrop(event) {
-            const file = event.dataTransfer.files[0];
+        // Handle file selection from gallery
+        uploadBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
 
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            handleFileUpload(file);
+        });
+
+        // Handle the uploaded file (either from drag-and-drop or file input)
+        function handleFileUpload(file) {
             if (file && file.type.startsWith('image/')) {
                 const reader = new FileReader();
                 
